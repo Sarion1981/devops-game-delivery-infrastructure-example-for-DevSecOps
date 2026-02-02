@@ -1,0 +1,22 @@
+# Erweiterung für deinen Game-Update-S3-Bucket
+resource "aws_s3_bucket_policy" "allow_access" {
+  bucket = aws_s3_bucket.game_assets.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "EnforceTLS"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource  = [
+          aws_s3_bucket.game_assets.arn,
+          "${aws_s3_bucket.game_assets.arn}/*"
+        ]
+        Condition = {
+          Bool = { "aws:SecureTransport" = "false" }
+        }
+      }
+    ]
+  })
+}
